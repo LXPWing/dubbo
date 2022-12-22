@@ -66,21 +66,29 @@ public class ExtensionDirector implements ExtensionAccessor {
     @SuppressWarnings("unchecked")
     public <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
         checkDestroyed();
+        //验证扩展点类型不能为空
         if (type == null) {
             throw new IllegalArgumentException("Extension type == null");
         }
+        //验证扩展点类型必须是接口
         if (!type.isInterface()) {
             throw new IllegalArgumentException("Extension type (" + type + ") is not an interface!");
         }
+        //验证扩展点接口必须添加@SPI注解
         if (!withExtensionAnnotation(type)) {
             throw new IllegalArgumentException("Extension type (" + type +
                 ") is not an extension, because it is NOT annotated with @" + SPI.class.getSimpleName() + "!");
         }
-
+        //根据扩展点类型获取ExtensionLoader。
+        //EXTENSION_LOADERS是保存ExtensionLoader对象的容器Map，key=扩展点类，value=ExtensionLoader对象
+        //EXTENSION_LOADERS的定义：ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>()
+        //由此可知，每种扩展点都拥有一个ExtensionLoader，全都保存在EXTENSION_LOADERS里。
         // 1. find in local cache
         ExtensionLoader<T> loader = (ExtensionLoader<T>) extensionLoadersMap.get(type);
 
         ExtensionScope scope = extensionScopeMap.get(type);
+
+        // 指定接口的生效范围
         if (scope == null) {
             SPI annotation = type.getAnnotation(SPI.class);
             scope = annotation.scope();

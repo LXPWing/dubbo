@@ -106,21 +106,32 @@ public class ExtensionLoader<T> {
     private static final Pattern NAME_SEPARATOR = Pattern.compile("\\s*[,]+\\s*");
     private static final String SPECIAL_SPI_PROPERTIES = "special_spi.properties";
 
+    // 扩展点实例容器，保存了所有实例化后的扩展点，key=扩展点Class，value=扩展点对象
     private final ConcurrentMap<Class<?>, Object> extensionInstances = new ConcurrentHashMap<>(64);
 
+    // 扩展点类型，Dubbo SPI要求这里的扩展点类型必须是接口。
     private final Class<?> type;
 
     private final ExtensionInjector injector;
 
+    // 扩展点类型-扩展点定义 key 的映射关系容器，可以通过扩展点 Class 获取 key
     private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>();
 
+    // 扩展点定义 key- 扩展点类型的映射关系容器，可以通过 key 获取扩展点 Class
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();
 
+    // 激活的扩展点容器，key= 扩展点定义 key，value=@Activate对象
     private final Map<String, Object> cachedActivates = Collections.synchronizedMap(new LinkedHashMap<>());
     private final Map<String, Set<String>> cachedActivateGroups = Collections.synchronizedMap(new LinkedHashMap<>());
     private final Map<String, String[][]> cachedActivateValues = Collections.synchronizedMap(new LinkedHashMap<>());
+
+    // 扩展点对象Holder的容器，用于保存已经实例化的扩展点对象Holder。
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();
+
+    // 自适应扩展点对象持有者，持有了 Dubbo 生成的自适应扩展点对象。
     private final Holder<Object> cachedAdaptiveInstance = new Holder<>();
+
+    // 自适应扩展点 Class 持有者，持有了 Dubbo 生成的自适应扩展点类。
     private volatile Class<?> cachedAdaptiveClass = null;
     private String cachedDefaultName;
     private volatile Throwable createAdaptiveInstanceError;
@@ -538,9 +549,11 @@ public class ExtensionLoader<T> {
     @SuppressWarnings("unchecked")
     public T getExtension(String name, boolean wrap) {
         checkDestroyed();
+        // 扩展点名不能为空
         if (StringUtils.isEmpty(name)) {
             throw new IllegalArgumentException("Extension name == null");
         }
+        // 获取默认扩展点
         if ("true".equals(name)) {
             return getDefaultExtension();
         }
@@ -548,17 +561,21 @@ public class ExtensionLoader<T> {
         if (!wrap) {
             cacheKey += "_origin";
         }
+        //从cachedInstances中获取扩展点Holder，如果没有就创建一个新的Holder
         final Holder<Object> holder = getOrCreateHolder(cacheKey);
         Object instance = holder.get();
+        //同步处理，防止创建多个
         if (instance == null) {
             synchronized (holder) {
                 instance = holder.get();
                 if (instance == null) {
+                    //创建扩展点关键逻辑，要认真跟下去。
                     instance = createExtension(name, wrap);
                     holder.set(instance);
                 }
             }
         }
+        //返回扩展点
         return (T) instance;
     }
 
@@ -758,20 +775,26 @@ public class ExtensionLoader<T> {
 
     @SuppressWarnings("unchecked")
     private T createExtension(String name, boolean wrap) {
+        //获取扩展点Class，
+        //此处的getExtensionClasses()是关键，包含了解析配置文件、加载类等逻辑。要认真的跟下去
         Class<?> clazz = getExtensionClasses().get(name);
         if (clazz == null || unacceptableExceptions.contains(name)) {
             throw findException(name);
         }
         try {
+            //先从全局扩展点容器EXTENSION_INSTANCES里获取，如果没有就创建个新的
             T instance = (T) extensionInstances.get(clazz);
             if (instance == null) {
                 extensionInstances.putIfAbsent(clazz, createExtensionInstance(clazz));
                 instance = (T) extensionInstances.get(clazz);
                 instance = postProcessBeforeInitialization(instance, name);
+                //依赖注入
                 injectExtension(instance);
                 instance = postProcessAfterInitialization(instance, name);
             }
 
+            //如果包含包装类，则返回包装类。
+            //备注：所谓包装类，就是对原类的增强类，类名为XXXWrapper、且有一个XXXWrapper(XXX)的构造函数。如ProtocolFilterWrapper
             if (wrap) {
                 List<Class<?>> wrapperClassesList = new ArrayList<>();
                 if (cachedWrapperClasses != null) {
@@ -782,6 +805,7 @@ public class ExtensionLoader<T> {
 
                 if (CollectionUtils.isNotEmpty(wrapperClassesList)) {
                     for (Class<?> wrapperClass : wrapperClassesList) {
+                        //对包装类进行依赖注入
                         Wrapper wrapper = wrapperClass.getAnnotation(Wrapper.class);
                         boolean match = (wrapper == null) ||
                             ((ArrayUtils.isEmpty(wrapper.matches()) || ArrayUtils.contains(wrapper.matches(), name)) &&
@@ -796,6 +820,7 @@ public class ExtensionLoader<T> {
 
             // Warning: After an instance of Lifecycle is wrapped by cachedWrapperClasses, it may not still be Lifecycle instance, this application may not invoke the lifecycle.initialize hook.
             initExtension(instance);
+            //返回扩展点
             return instance;
         } catch (Throwable t) {
             throw new IllegalStateException("Extension instance (name: " + name + ", class: " +
@@ -926,12 +951,15 @@ public class ExtensionLoader<T> {
     }
 
     private Map<String, Class<?>> getExtensionClasses() {
+        //cachedClasses是扩展点名-扩展点Class的Map容器的Holder
         Map<String, Class<?>> classes = cachedClasses.get();
+        //同步处理，防止重复加载扩展点Class
         if (classes == null) {
             synchronized (cachedClasses) {
                 classes = cachedClasses.get();
                 if (classes == null) {
                     try {
+                        //加载扩展点Class
                         classes = loadExtensionClasses();
                     } catch (InterruptedException e) {
                         logger.error("Exception occurred when loading extension class (interface: " + type + ")", e);
@@ -950,6 +978,8 @@ public class ExtensionLoader<T> {
     @SuppressWarnings("deprecation")
     private Map<String, Class<?>> loadExtensionClasses() throws InterruptedException {
         checkDestroyed();
+        //获取默认扩展点名
+        //里面的内容较简单，这里只需要知道是通过@SPI注解获取的就行了。
         cacheDefaultExtensionName();
 
         Map<String, Class<?>> extensionClasses = new HashMap<>();
@@ -1004,6 +1034,7 @@ public class ExtensionLoader<T> {
     }
 
     private void loadDirectoryInternal(Map<String, Class<?>> extensionClasses, LoadingStrategy loadingStrategy, String type) throws InterruptedException {
+        //拼接文件名，如META-INF/dubbo/internal/org.apache.dubbo.rpc.Protocol
         String fileName = loadingStrategy.directory() + type;
         try {
             List<ClassLoader> classLoadersToLoad = new LinkedList<>();
