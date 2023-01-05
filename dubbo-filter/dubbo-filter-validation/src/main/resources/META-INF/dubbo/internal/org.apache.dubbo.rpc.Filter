@@ -1,1 +1,2 @@
 validation=org.apache.dubbo.validation.filter.ValidationFilter
+mdc=org.apache.dubbo.validation.filter.MdcFilter

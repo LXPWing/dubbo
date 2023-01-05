@@ -27,3 +27,19 @@ dubbo:
     address: zookeeper://127.0.0.1:2181
   metadata-report:
     address: zookeeper://127.0.0.1:2181
+
+spring:
+  application:
+    name: springboot2-prometheus
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+endpoints:
+  web:
+    exposure: include=*
+
+server:
+  port: 8088

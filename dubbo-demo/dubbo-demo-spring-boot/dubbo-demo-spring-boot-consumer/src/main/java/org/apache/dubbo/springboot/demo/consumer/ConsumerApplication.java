@@ -17,18 +17,44 @@
 
 package org.apache.dubbo.springboot.demo.consumer;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
+import org.apache.dubbo.rpc.Filter;
 import org.apache.dubbo.springboot.demo.DemoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
 
 @SpringBootApplication
 @Service
 @EnableDubbo
 public class ConsumerApplication {
+    @Autowired
+    MeterRegistry registry;
+
+    private Counter counter_core;
+    private Counter counter_index;
+
+    @PostConstruct
+    private void init(){
+        counter_core = registry.counter("app_requests_method_count", "method", "IndexController.core");
+        counter_index = registry.counter("app_requests_method_count", "method", "IndexController.index");
+        counter_core.increment();
+        counter_index.increment();
+
+        System.out.println("counter_core: " + counter_core.count());
+    }
 
     @DubboReference
     private DemoService demoService;
@@ -37,10 +63,20 @@ public class ConsumerApplication {
         ConfigurableApplicationContext context = SpringApplication.run(ConsumerApplication.class, args);
         ConsumerApplication application = context.getBean(ConsumerApplication.class);
         String result = application.doSayHello("world");
+        ExtensionLoader<Filter> extensionLoader = ExtensionLoader.getExtensionLoader(Filter.class);
+        List<Filter> activateExtensions = extensionLoader.getActivateExtensions();
+        activateExtensions.forEach(item -> {
+            System.out.println(item.toString());
+        });
         System.out.println("result: " + result);
     }
 
     public String doSayHello(String name) {
         return demoService.sayHello(name);
+    }
+
+    @Bean
+    MeterRegistryCustomizer<MeterRegistry> configurer(@Value("${spring.application.name}") String applicationName){
+        return registry -> registry.config().commonTags("application", applicationName);
     }
 }
