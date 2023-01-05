@@ -122,9 +122,11 @@ public class ZookeeperRegistry extends CacheableFailbackRegistry {
         }
     }
 
+    // 服务注册
     @Override
     public void doRegister(URL url) {
         try {
+            // 判断zkClient是否被销毁
             checkDestroyed();
             zkClient.create(toUrlPath(url), url.getParameter(DYNAMIC_KEY, true));
         } catch (Throwable e) {

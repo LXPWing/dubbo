@@ -52,6 +52,7 @@ public class RandomLoadBalance extends AbstractLoadBalance {
     @Override
     protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
         // Number of invokers
+        // invoker的总数
         int length = invokers.size();
 
         if (!needWeightLoadBalance(invokers,invocation)){
@@ -59,6 +60,7 @@ public class RandomLoadBalance extends AbstractLoadBalance {
         }
 
         // Every invoker has the same weight?
+        // 每个invoker的权重是否一样
         boolean sameWeight = true;
         // the maxWeight of every invokers, the minWeight = 0 or the maxWeight of the last invoker
         int[] weights = new int[length];

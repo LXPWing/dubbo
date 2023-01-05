@@ -18,6 +18,7 @@
 package org.apache.dubbo.springboot.demo.provider;
 
 
+import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,6 +30,8 @@ import java.util.concurrent.CountDownLatch;
 public class ProviderApplication {
     public static void main(String[] args) throws Exception {
         SpringApplication.run(ProviderApplication.class, args);
+        //DemoServiceImpl adaptiveExtension = ExtensionLoader.getExtensionLoader(DemoServiceImpl.class).getAdaptiveExtension();
+        //adaptiveExtension.world();
         System.out.println("dubbo service started");
         new CountDownLatch(1).await();
     }

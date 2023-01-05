@@ -17,6 +17,7 @@
 package org.apache.dubbo.springboot.demo.provider;
 
 
+import org.apache.dubbo.common.extension.Adaptive;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.springboot.demo.DemoService;
@@ -30,5 +31,9 @@ public class DemoServiceImpl implements DemoService {
         return "Hello " + name;
     }
 
+    @Adaptive
+    public void world(){
+        System.out.println("hihihihi");
+    }
 
 }
