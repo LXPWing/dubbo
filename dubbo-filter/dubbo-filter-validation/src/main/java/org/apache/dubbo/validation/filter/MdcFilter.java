@@ -17,7 +17,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER;
  * @author lxp
  * @data 2023-1-5 14:27
  */
-@Activate(group = {PROVIDER, CONSUMER})
+@Activate(group = {PROVIDER, CONSUMER}, order = -30000)
 public class MdcFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(MdcFilter.class);
 
