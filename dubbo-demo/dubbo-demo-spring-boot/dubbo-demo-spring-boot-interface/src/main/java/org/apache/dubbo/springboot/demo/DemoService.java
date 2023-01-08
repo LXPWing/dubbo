@@ -16,11 +16,15 @@
  */
 package org.apache.dubbo.springboot.demo;
 
+import io.micrometer.tracing.Tracer;
+
 import java.util.concurrent.CompletableFuture;
 
 public interface DemoService {
 
     String sayHello(String name);
+
+    Tracer doTrace(Trace tracer);
 
     default CompletableFuture<String> sayHelloAsync(String name) {
         return CompletableFuture.completedFuture(sayHello(name));

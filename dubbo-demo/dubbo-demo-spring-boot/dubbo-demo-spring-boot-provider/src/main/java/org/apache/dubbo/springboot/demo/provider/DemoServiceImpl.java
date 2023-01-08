@@ -17,18 +17,27 @@
 package org.apache.dubbo.springboot.demo.provider;
 
 
+import io.micrometer.tracing.Tracer;
 import org.apache.dubbo.common.extension.Adaptive;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.springboot.demo.DemoService;
+import org.apache.dubbo.springboot.demo.Trace;
 
 @DubboService
 public class DemoServiceImpl implements DemoService {
-
     @Override
     public String sayHello(String name) {
         System.out.println("Hello " + name + ", request from consumer: " + RpcContext.getContext().getRemoteAddress());
         return "Hello " + name;
+    }
+
+    @Override
+    public Tracer doTrace(Trace trace) {
+        System.out.println("看这里");
+        Tracer tracer = trace.getTracer();
+        System.out.println(tracer.getAllBaggage());
+        return null;
     }
 
     @Adaptive

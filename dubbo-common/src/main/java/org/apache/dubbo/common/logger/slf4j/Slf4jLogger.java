@@ -19,6 +19,7 @@ package org.apache.dubbo.common.logger.slf4j;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.support.FailsafeLogger;
 
+import org.slf4j.MDC;
 import org.slf4j.spi.LocationAwareLogger;
 
 public class Slf4jLogger implements Logger {
@@ -36,6 +37,18 @@ public class Slf4jLogger implements Logger {
             locationAwareLogger = null;
         }
         this.logger = logger;
+    }
+
+    public void putMdc(String key, String val) {
+        MDC.put(key, val);
+    }
+
+    public void removeMdc(String key) {
+        MDC.remove(key);
+    }
+
+    public String getMdc(String key) {
+        return MDC.get(key);
     }
 
     @Override

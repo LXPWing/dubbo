@@ -23,7 +23,10 @@ import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.apache.dubbo.rpc.Filter;
+import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.springboot.demo.DemoService;
+import org.apache.dubbo.springboot.demo.Trace;
+import org.apache.dubbo.springboot.demo.consumer.config.MicrometerTracingBrave;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -63,16 +66,16 @@ public class ConsumerApplication {
         ConfigurableApplicationContext context = SpringApplication.run(ConsumerApplication.class, args);
         ConsumerApplication application = context.getBean(ConsumerApplication.class);
         String result = application.doSayHello("world");
-        ExtensionLoader<Filter> extensionLoader = ExtensionLoader.getExtensionLoader(Filter.class);
-        List<Filter> activateExtensions = extensionLoader.getActivateExtensions();
-        activateExtensions.forEach(item -> {
-            System.out.println(item.toString());
-        });
+        //application.doTrace();
         System.out.println("result: " + result);
     }
 
     public String doSayHello(String name) {
         return demoService.sayHello(name);
+    }
+
+    public void doTrace() {
+        demoService.doTrace(new Trace(MicrometerTracingBrave.beginTrace()));
     }
 
     @Bean

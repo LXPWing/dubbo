@@ -32,9 +32,32 @@
         <maven.compiler.target>8</maven.compiler.target>
         <slf4j-log4j12.version>1.7.25</slf4j-log4j12.version>
         <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
+        <micrometer-tracing.version>1.6.2</micrometer-tracing.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
+            <version>2.16.3</version>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-sender-urlconnection</artifactId>
+            <version>2.16.3</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-demo-spring-boot-interface</artifactId>
@@ -102,13 +125,6 @@
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-filter-validation</artifactId>
             <version>3.0.13-SNAPSHOT</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>1.9.2</version>
         </dependency>
 
         <dependency>
