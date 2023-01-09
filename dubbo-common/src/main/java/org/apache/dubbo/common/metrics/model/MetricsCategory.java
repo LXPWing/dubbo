@@ -20,6 +20,7 @@ package org.apache.dubbo.common.metrics.model;
 /**
  * Metric category.
  */
+// 埋点类别
 public enum MetricsCategory {
     RT,
     QPS,

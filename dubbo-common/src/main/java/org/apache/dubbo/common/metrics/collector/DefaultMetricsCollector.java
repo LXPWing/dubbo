@@ -40,6 +40,7 @@ import org.apache.dubbo.rpc.model.ApplicationModel;
 /**
  * Default implementation of {@link MetricsCollector}
  */
+// 基础指标(指标通过 common 模块下的 MetricsCollector 存储所有指标数据)
 public class DefaultMetricsCollector implements MetricsCollector {
 
     private AtomicBoolean collectEnabled = new AtomicBoolean(false);

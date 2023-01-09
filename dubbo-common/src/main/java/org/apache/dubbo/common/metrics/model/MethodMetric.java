@@ -34,6 +34,7 @@ import static org.apache.dubbo.common.utils.NetUtils.getLocalHostName;
 /**
  * Metric class for method.
  */
+// 指标标识 (用以下五个属性作为隔离级别区分标识不同方法，也是各个 ConcurrentHashMap 的 key)
 public class MethodMetric {
     private String applicationName;
     private String interfaceName;
