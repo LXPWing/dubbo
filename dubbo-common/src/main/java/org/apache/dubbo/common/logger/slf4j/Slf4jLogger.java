@@ -200,11 +200,11 @@ public class Slf4jLogger implements Logger, MDC {
     }
 
     @Override
-    public void put(String key, Object val) {
+    public void put(String key, Object val) throws IllegalArgumentException {
         if(val instanceof String) {
             org.slf4j.MDC.put(key, (String) val);
         } else {
-            //
+            throw new IllegalArgumentException("Slf4j MDC value parameter must be String");
         }
     }
 
