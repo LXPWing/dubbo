@@ -17,11 +17,12 @@
 package org.apache.dubbo.common.logger.slf4j;
 
 import org.apache.dubbo.common.logger.Logger;
+import org.apache.dubbo.common.logger.MDC;
 import org.apache.dubbo.common.logger.support.FailsafeLogger;
 
 import org.slf4j.spi.LocationAwareLogger;
 
-public class Slf4jLogger implements Logger {
+public class Slf4jLogger implements Logger, MDC {
 
     private static final String FQCN = FailsafeLogger.class.getName();
 
@@ -198,4 +199,27 @@ public class Slf4jLogger implements Logger {
         return logger.isErrorEnabled();
     }
 
+    @Override
+    public void put(String key, Object val) {
+        if(val instanceof String) {
+            org.slf4j.MDC.put(key, (String) val);
+        } else {
+            //
+        }
+    }
+
+    @Override
+    public void remove(String key) {
+        org.slf4j.MDC.remove(key);
+    }
+
+    @Override
+    public String get(String key) {
+        return org.slf4j.MDC.get(key);
+    }
+
+    @Override
+    public void clean() {
+        org.slf4j.MDC.clear();
+    }
 }

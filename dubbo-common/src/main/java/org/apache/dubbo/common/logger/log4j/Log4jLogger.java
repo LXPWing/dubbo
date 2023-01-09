@@ -17,11 +17,12 @@
 package org.apache.dubbo.common.logger.log4j;
 
 import org.apache.dubbo.common.logger.Logger;
+import org.apache.dubbo.common.logger.MDC;
 import org.apache.dubbo.common.logger.support.FailsafeLogger;
 
 import org.apache.log4j.Level;
 
-public class Log4jLogger implements Logger {
+public class Log4jLogger implements Logger, MDC {
 
     private static final String FQCN = FailsafeLogger.class.getName();
 
@@ -131,4 +132,23 @@ public class Log4jLogger implements Logger {
         return logger.isEnabledFor(Level.ERROR);
     }
 
+    @Override
+    public void put(String key, Object val) {
+        org.apache.log4j.MDC.put(key, val);
+    }
+
+    @Override
+    public void remove(String key) {
+        org.apache.log4j.MDC.remove(key);
+    }
+
+    @Override
+    public Object get(String key) {
+        return org.apache.log4j.MDC.get(key);
+    }
+
+    @Override
+    public void clean() {
+        org.apache.log4j.MDC.clear();
+    }
 }
