@@ -18,19 +18,17 @@
 package org.apache.dubbo.metrics.filter;
 
 import org.apache.dubbo.common.constants.CommonConstants;
+import org.apache.dubbo.common.constants.MetricsConstants;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.logger.MDC;
 import org.apache.dubbo.rpc.*;
-import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.rpc.model.ScopeModelAware;
 
-@Activate(group = {CommonConstants.PROVIDER, CommonConstants.CONSUMER}, order = -1)
+@Activate(group = {CommonConstants.PROVIDER, CommonConstants.CONSUMER}, value = MetricsConstants.TRACE_START_MDC, order = -1)
 public class MDCFilter implements Filter, ScopeModelAware {
     private Logger logger = LoggerFactory.getLogger(getClass());
-
-    private ApplicationModel applicationModel;
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
