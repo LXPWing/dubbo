@@ -21,19 +21,23 @@ import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
+import org.apache.dubbo.common.logger.MDC;
 import org.apache.dubbo.rpc.*;
+import org.apache.dubbo.rpc.model.ApplicationModel;
+import org.apache.dubbo.rpc.model.ScopeModelAware;
 
-@Activate(value = {CommonConstants.PROVIDER, CommonConstants.CONSUMER}, order = -1)
-public class MDCFilter implements Filter {
-
+@Activate(group = {CommonConstants.PROVIDER, CommonConstants.CONSUMER}, order = -1)
+public class MDCFilter implements Filter, ScopeModelAware {
     private Logger logger = LoggerFactory.getLogger(getClass());
+
+    private ApplicationModel applicationModel;
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         Class<?>[] interfaces = logger.getClass().getInterfaces();
         for (Class<?> cls : interfaces) {
-            if(cls == MDCFilter.class) {
-
+            if(cls == MDC.class) {
+                // TODO mdc注入
             }
         }
 
