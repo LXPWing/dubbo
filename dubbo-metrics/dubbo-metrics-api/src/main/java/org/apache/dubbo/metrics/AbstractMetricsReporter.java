@@ -84,6 +84,7 @@ public abstract class AbstractMetricsReporter implements MetricsReporter {
             addJvmMetrics();
             initCollectors();
             scheduleMetricsCollectorSyncJob();
+            addMetaDataMetrics();
 
             doInit();
 
@@ -104,6 +105,14 @@ public abstract class AbstractMetricsReporter implements MetricsReporter {
 
     protected ApplicationModel getApplicationModel() {
         return applicationModel;
+    }
+
+    private void addMetaDataMetrics() {
+        // TODO 注册中心指标推送
+        boolean enable = url.getParameter("ENABLE_METADATA_METRICS_KEY", false);
+        if(enable) {
+
+        }
     }
 
     private void addJvmMetrics() {

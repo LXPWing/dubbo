@@ -36,6 +36,8 @@ public interface MetricsConstants {
 
     String ENABLE_JVM_METRICS_KEY = "enable.jvm.metrics";
 
+    String ENABLE_METADATA_METRICS_KEY = "enable.metadata.metrics";
+
     String AGGREGATION_COLLECTOR_KEY = "aggregation";
 
     String AGGREGATION_ENABLED_KEY = "aggregation.enabled";

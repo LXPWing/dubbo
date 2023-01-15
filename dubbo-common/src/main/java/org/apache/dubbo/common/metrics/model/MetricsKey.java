@@ -40,6 +40,9 @@ public enum MetricsKey {
     METRIC_RT_AVG("rt.avg", "Average Response Time"),
     METRIC_RT_P99("rt.p99", "Response Time P99"),
     METRIC_RT_P95("rt.p95", "Response Time P95"),
+
+    METRIC_METADATA_REQUESTS_TOTAL("metadata.request.total", "MetaData Total Request"),
+    METRIC_METADATA_REQUESTS_SUCCEED("metadata.request.succeed", "MetaData Succeed Request"),
     ;
 
     private final String name;
