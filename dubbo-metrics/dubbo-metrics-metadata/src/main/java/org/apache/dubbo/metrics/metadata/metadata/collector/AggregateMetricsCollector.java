@@ -15,29 +15,8 @@
  * limitations under the License.
  */
 
-package org.apache.dubbo.common.metrics.event;
+package org.apache.dubbo.metrics.metadata.metadata.collector;
 
-public class MetaDataEvent extends MetricsEvent{
-    private Type type;
+public class AggregateMetricsCollector {
 
-    public MetaDataEvent(Object source, Type type) {
-        super(source);
-        this.type = type;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public enum Type {
-        TOTAL,
-        SUCCEED,
-        FAILED,
-        PROCESSING,
-        HIT,
-    }
 }

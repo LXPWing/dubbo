@@ -15,20 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.dubbo.metrics.collector.metadata;
+package org.apache.dubbo.metrics.metadata.metadata.stat;
 
-import org.apache.dubbo.common.metrics.collector.MetricsCollector;
-import org.apache.dubbo.common.metrics.model.sample.MetricSample;
+import org.apache.dubbo.common.metrics.collector.stat.MetricsStatHandler;
+import org.apache.dubbo.common.metrics.model.MethodMetric;
 
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
-public class MetaDataMetricsCollector implements MetricsCollector {
+public class MateDataMetricsStatHandler {
 
-
-
-
-    @Override
-    public List<MetricSample> collect() {
-        return null;
-    }
 }
