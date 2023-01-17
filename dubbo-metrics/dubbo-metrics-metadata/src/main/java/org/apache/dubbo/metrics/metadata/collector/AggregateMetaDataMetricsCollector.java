@@ -15,14 +15,8 @@
  * limitations under the License.
  */
 
-package org.apache.dubbo.common.metrics.model;
+package org.apache.dubbo.metrics.metadata.collector;
 
-/**
- * Metric category.
- */
-public enum MetricsCategory {
-    RT,
-    QPS,
-    REQUESTS,
-    METADATA
+public class AggregateMetaDataMetricsCollector {
+
 }

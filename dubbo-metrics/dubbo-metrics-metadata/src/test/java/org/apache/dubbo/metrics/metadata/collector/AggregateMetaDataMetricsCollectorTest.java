@@ -15,14 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.dubbo.common.metrics.model;
+package org.apache.dubbo.metrics.metadata.collector;
 
-/**
- * Metric category.
- */
-public enum MetricsCategory {
-    RT,
-    QPS,
-    REQUESTS,
-    METADATA
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class AggregateMetaDataMetricsCollectorTest {
+
+    @BeforeEach
+    public void setup() {
+
+    }
+
+    @Test
+    public void test() {
+
+    }
 }

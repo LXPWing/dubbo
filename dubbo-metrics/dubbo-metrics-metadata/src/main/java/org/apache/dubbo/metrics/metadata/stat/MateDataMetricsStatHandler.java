@@ -15,14 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.dubbo.common.metrics.model;
+package org.apache.dubbo.metrics.metadata.stat;
 
-/**
- * Metric category.
- */
-public enum MetricsCategory {
-    RT,
-    QPS,
-    REQUESTS,
-    METADATA
+import org.apache.dubbo.metrics.metadata.model.MetaDataMetric;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
+public class MateDataMetricsStatHandler implements MetaDataMetricsStatHandler{
+
+    @Override
+    public Map<MetaDataMetric, AtomicLong> get() {
+        return null;
+    }
+
+    @Override
+    public void increase(String path, String group, String version) {
+
+    }
+
+    @Override
+    public void decrease(String path, String group, String version) {
+
+    }
 }

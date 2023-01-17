@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.dubbo.metrics.metadata.metadata.stat;
+package org.apache.dubbo.metrics.metadata.stat;
 
 import org.apache.dubbo.common.metrics.collector.DefaultMetricsCollector;
 import org.apache.dubbo.common.metrics.listener.MetricsListener;
-import org.apache.dubbo.common.metrics.model.MethodMetric;
+import org.apache.dubbo.metrics.metadata.model.MetaDataMetric;
 
 import java.util.List;
 import java.util.Map;
@@ -29,17 +29,17 @@ import java.util.concurrent.atomic.LongAccumulator;
 
 public class MetricsMetaDataComposite {
 
-    private final Map<MethodMetric, AtomicLong> lastRT = new ConcurrentHashMap<>();
+    private final Map<MetaDataMetric, AtomicLong> lastRT = new ConcurrentHashMap<>();
 
-    private final Map<MethodMetric, LongAccumulator> minRT  = new ConcurrentHashMap<>();
+    private final Map<MetaDataMetric, LongAccumulator> minRT  = new ConcurrentHashMap<>();
 
-    private final Map<MethodMetric, LongAccumulator> maxRT  = new ConcurrentHashMap<>();
+    private final Map<MetaDataMetric, LongAccumulator> maxRT  = new ConcurrentHashMap<>();
 
-    private final Map<MethodMetric, AtomicLong> avgRT = new ConcurrentHashMap<>();
+    private final Map<MetaDataMetric, AtomicLong> avgRT = new ConcurrentHashMap<>();
 
-    private final Map<MethodMetric, AtomicLong> totalRT = new ConcurrentHashMap<>();
+    private final Map<MetaDataMetric, AtomicLong> totalRT = new ConcurrentHashMap<>();
 
-    private final Map<MethodMetric, AtomicLong> rtCount = new ConcurrentHashMap<>();
+    private final Map<MetaDataMetric, AtomicLong> rtCount = new ConcurrentHashMap<>();
     private final String applicationName;
     private final List<MetricsListener> listeners;
     private DefaultMetricsCollector collector;

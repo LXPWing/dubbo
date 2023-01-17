@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.dubbo.metrics.metadata.metadata.collector;
+package org.apache.dubbo.metrics.metadata.collector;
 
 import org.apache.dubbo.common.metrics.collector.MetricsCollector;
 import org.apache.dubbo.common.metrics.listener.MetricsListener;
@@ -41,6 +41,7 @@ public class MetaDataMetricsCollector implements MetricsCollector {
     @Override
     public List<MetricSample> collect() {
         List<MetricSample> list = new ArrayList<>();
+        collectMetrics(list);
 
         return list;
     }
@@ -58,6 +59,10 @@ public class MetaDataMetricsCollector implements MetricsCollector {
     }
 
     public void increaseHitCount() {
+
+    }
+
+    private void collectMetrics(List<MetricSample> list) {
 
     }
 

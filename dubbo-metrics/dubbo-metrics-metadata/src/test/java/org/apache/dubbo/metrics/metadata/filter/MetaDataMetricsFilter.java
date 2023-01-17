@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.dubbo.metrics.metadata.metadata.stat;
+package org.apache.dubbo.metrics.metadata.filter;
 
-import org.apache.dubbo.common.metrics.collector.stat.MetricsStatHandler;
-import org.apache.dubbo.common.metrics.model.MethodMetric;
+import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+public class MetaDataMetricsFilter {
 
-public class MateDataMetricsStatHandler {
+    @Test
+    public void test() {
 
+    }
 }
