@@ -70,12 +70,12 @@ public class MetaDataMetricsCollector implements MetricsCollector {
         listeners.add(listener);
     }
 
-    public AtomicBoolean getCollectEnabled() {
-        return collectEnabled;
+    public Boolean isCollectEnabled() {
+        return collectEnabled.get();
     }
 
-    public void setCollectEnabled(AtomicBoolean collectEnabled) {
-        this.collectEnabled = collectEnabled;
+    public void setCollectEnabled(Boolean collectEnabled) {
+        this.collectEnabled.compareAndSet(isCollectEnabled(), collectEnabled);
     }
 
     public List<MetricsListener> getListeners() {

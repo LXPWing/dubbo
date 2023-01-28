@@ -17,6 +17,15 @@
 
 package org.apache.dubbo.metrics.metadata.collector;
 
-public class AggregateMetaDataMetricsCollector {
+import org.apache.dubbo.common.metrics.collector.MetricsCollector;
+import org.apache.dubbo.common.metrics.model.sample.MetricSample;
 
+import java.util.List;
+
+public class AggregateMetaDataMetricsCollector implements MetricsCollector {
+
+    @Override
+    public List<MetricSample> collect() {
+        return null;
+    }
 }

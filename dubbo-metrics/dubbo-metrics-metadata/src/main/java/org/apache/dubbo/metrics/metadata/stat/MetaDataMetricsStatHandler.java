@@ -24,6 +24,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public interface MetaDataMetricsStatHandler {
     Map<MetaDataMetric, AtomicLong> get();
-    void increase(String path, String group, String version);
-    void decrease(String path, String group, String version);
+    void increase(String interfaceName, String methodName, String group, String version);
+    void decrease(String interfaceName, String methodName, String group, String version);
 }

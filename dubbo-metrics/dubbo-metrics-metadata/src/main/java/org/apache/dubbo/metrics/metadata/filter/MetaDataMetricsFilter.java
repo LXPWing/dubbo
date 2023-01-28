@@ -17,5 +17,32 @@
 
 package org.apache.dubbo.metrics.metadata.filter;
 
-public class MetaDataMetricsFilter {
+import org.apache.dubbo.common.extension.Activate;
+import org.apache.dubbo.metrics.metadata.collector.MetaDataMetricsCollector;
+import org.apache.dubbo.rpc.*;
+import org.apache.dubbo.rpc.model.ApplicationModel;
+import org.apache.dubbo.rpc.model.ScopeModelAware;
+
+import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER;
+
+@Activate(group = PROVIDER, order = -1)
+public class MetaDataMetricsFilter implements Filter, ScopeModelAware {
+    private MetaDataMetricsCollector collector = null;
+
+    private ApplicationModel applicationModel;
+
+    @Override
+    public void setApplicationModel(ApplicationModel applicationModel) {
+        this.applicationModel = applicationModel;
+        collector = applicationModel.getBeanFactory().getBean(MetaDataMetricsCollector.class);
+    }
+
+    @Override
+    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
+        if (collector == null || !collector.isCollectEnabled()) {
+            return invoker.invoke(invocation);
+        }
+
+        return invoker.invoke(invocation);
+    }
 }

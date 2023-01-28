@@ -17,26 +17,78 @@
 
 package org.apache.dubbo.metrics.metadata.service;
 
+import org.apache.dubbo.common.metrics.collector.MetricsCollector;
 import org.apache.dubbo.common.metrics.model.MetricsCategory;
+import org.apache.dubbo.common.metrics.model.sample.GaugeMetricSample;
+import org.apache.dubbo.common.metrics.model.sample.MetricSample;
 import org.apache.dubbo.common.metrics.service.MetricsEntity;
 import org.apache.dubbo.common.metrics.service.MetricsService;
+import org.apache.dubbo.metrics.metadata.collector.AggregateMetaDataMetricsCollector;
+import org.apache.dubbo.metrics.metadata.collector.MetaDataMetricsCollector;
+import org.apache.dubbo.rpc.model.ApplicationModel;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MetaDataMetricsService implements MetricsService {
+
+    protected final List<MetricsCollector> collectors = new ArrayList<>();
+
+    private final ApplicationModel applicationModel;
+
+    public MetaDataMetricsService(ApplicationModel applicationModel) {
+        this.applicationModel = applicationModel;
+        collectors.add(applicationModel.getBeanFactory().getBean(MetaDataMetricsCollector.class));
+        collectors.add(applicationModel.getBeanFactory().getBean(AggregateMetaDataMetricsCollector.class));
+    }
+
     @Override
     public Map<MetricsCategory, List<MetricsEntity>> getMetricsByCategories(List<MetricsCategory> categories) {
-        return null;
+        return getMetricsByCategories(null, categories);
     }
 
     @Override
     public Map<MetricsCategory, List<MetricsEntity>> getMetricsByCategories(String serviceUniqueName, List<MetricsCategory> categories) {
-        return null;
+        return getMetricsByCategories(serviceUniqueName, null, null, categories);
     }
 
     @Override
     public Map<MetricsCategory, List<MetricsEntity>> getMetricsByCategories(String serviceUniqueName, String methodName, Class<?>[] parameterTypes, List<MetricsCategory> categories) {
-        return null;
+        Map<MetricsCategory, List<MetricsEntity>> result = new HashMap<>();
+        for (MetricsCollector collector : collectors) {
+            List<MetricSample> samples = collector.collect();
+            for (MetricSample sample : samples) {
+                if (categories.contains(sample.getCategory())) {
+                    List<MetricsEntity> entities = result.computeIfAbsent(sample.getCategory(), k -> new ArrayList<>());
+                    entities.add(sampleToEntity(sample));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private MetricsEntity sampleToEntity(MetricSample sample) {
+        MetricsEntity entity = new MetricsEntity();
+
+        entity.setName(sample.getName());
+        entity.setTags(sample.getTags());
+        entity.setCategory(sample.getCategory());
+        switch (sample.getType()) {
+            case GAUGE:
+                GaugeMetricSample gaugeSample = (GaugeMetricSample) sample;
+                entity.setValue(gaugeSample.getSupplier().get());
+                break;
+            case COUNTER:
+            case LONG_TASK_TIMER:
+            case TIMER:
+            case DISTRIBUTION_SUMMARY:
+            default:
+                break;
+        }
+
+        return entity;
     }
 }

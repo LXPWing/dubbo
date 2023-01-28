@@ -20,37 +20,35 @@ package org.apache.dubbo.metrics.metadata.model;
 import java.util.Objects;
 
 public class MetaDataMetric {
-    private String app;
+    private String applicationName;
 
     private String revision;
 
-    private String path;
+    private String interfaceName;
 
-    private String protocol;
+    private String methodName;
 
     private String group;
 
     private String version;
 
-    public MetaDataMetric() {
+    public MetaDataMetric() {}
 
-    }
-
-    public MetaDataMetric(String app, String revision, String path, String protocol, String group, String version) {
-        this.app = app;
+    public MetaDataMetric(String applicationName, String revision, String interfaceName, String methodName, String group, String version) {
+        this.applicationName = applicationName;
         this.revision = revision;
-        this.path = path;
-        this.protocol = protocol;
+        this.interfaceName = interfaceName;
+        this.methodName = methodName;
         this.group = group;
         this.version = version;
     }
 
-    public String getApp() {
-        return app;
+    public String getApplicationName() {
+        return applicationName;
     }
 
-    public void setApp(String app) {
-        this.app = app;
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
     }
 
     public String getRevision() {
@@ -61,20 +59,20 @@ public class MetaDataMetric {
         this.revision = revision;
     }
 
-    public String getPath() {
-        return path;
+    public String getInterfaceName() {
+        return interfaceName;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
     }
 
-    public String getProtocol() {
-        return protocol;
+    public String getMethodName() {
+        return methodName;
     }
 
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
     }
 
     public String getGroup() {
@@ -98,21 +96,21 @@ public class MetaDataMetric {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MetaDataMetric that = (MetaDataMetric) o;
-        return Objects.equals(app, that.app) && Objects.equals(revision, that.revision) && Objects.equals(path, that.path) && Objects.equals(protocol, that.protocol) && Objects.equals(group, that.group) && Objects.equals(version, that.version);
+        return Objects.equals(applicationName, that.applicationName) && Objects.equals(revision, that.revision) && Objects.equals(interfaceName, that.interfaceName) && Objects.equals(methodName, that.methodName) && Objects.equals(group, that.group) && Objects.equals(version, that.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(app, revision, path, protocol, group, version);
+        return Objects.hash(applicationName, revision, interfaceName, methodName, group, version);
     }
 
     @Override
     public String toString() {
         return "MetaDataMetric{" +
-            "app='" + app + '\'' +
+            "applicationName='" + applicationName + '\'' +
             ", revision='" + revision + '\'' +
-            ", path='" + path + '\'' +
-            ", protocol='" + protocol + '\'' +
+            ", interfaceName='" + interfaceName + '\'' +
+            ", methodName='" + methodName + '\'' +
             ", group='" + group + '\'' +
             ", version='" + version + '\'' +
             '}';

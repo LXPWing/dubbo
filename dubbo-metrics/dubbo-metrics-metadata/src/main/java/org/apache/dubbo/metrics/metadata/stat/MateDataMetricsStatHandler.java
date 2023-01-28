@@ -30,12 +30,12 @@ public class MateDataMetricsStatHandler implements MetaDataMetricsStatHandler{
     }
 
     @Override
-    public void increase(String path, String group, String version) {
+    public void increase(String interfaceName, String methodName, String group, String version) {
 
     }
 
     @Override
-    public void decrease(String path, String group, String version) {
+    public void decrease(String interfaceName, String methodName, String group, String version) {
 
     }
 }
