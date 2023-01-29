@@ -29,7 +29,7 @@ public class MetaDataMetricsCollectExecutor {
 
     private final Invocation invocation;
 
-    private String path;
+    private String interfaceName;
 
     private String group;
 

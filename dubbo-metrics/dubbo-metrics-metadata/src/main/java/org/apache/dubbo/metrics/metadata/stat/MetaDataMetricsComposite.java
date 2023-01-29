@@ -19,6 +19,7 @@ package org.apache.dubbo.metrics.metadata.stat;
 
 import org.apache.dubbo.common.metrics.collector.DefaultMetricsCollector;
 import org.apache.dubbo.common.metrics.listener.MetricsListener;
+import org.apache.dubbo.metrics.metadata.collector.MetaDataMetricsCollector;
 import org.apache.dubbo.metrics.metadata.model.MetaDataMetric;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAccumulator;
 
-public class MetricsMetaDataComposite {
+public class MetaDataMetricsComposite {
 
     private final Map<MetaDataMetric, AtomicLong> lastRT = new ConcurrentHashMap<>();
 
@@ -42,11 +43,11 @@ public class MetricsMetaDataComposite {
     private final Map<MetaDataMetric, AtomicLong> rtCount = new ConcurrentHashMap<>();
     private final String applicationName;
     private final List<MetricsListener> listeners;
-    private DefaultMetricsCollector collector;
+    private MetaDataMetricsCollector collector;
 
-    public MetricsMetaDataComposite(String applicationName, DefaultMetricsCollector collector) {
+    public MetaDataMetricsComposite(String applicationName, MetaDataMetricsCollector collector) {
         this.applicationName = applicationName;
-        this.listeners = collector.getListener();
+        this.listeners = collector.getListeners();
         this.collector = collector;
     }
 }

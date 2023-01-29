@@ -18,14 +18,21 @@
 package org.apache.dubbo.metrics.metadata.collector;
 
 import org.apache.dubbo.common.metrics.collector.MetricsCollector;
+import org.apache.dubbo.common.metrics.event.MetricsEvent;
+import org.apache.dubbo.common.metrics.listener.MetricsListener;
 import org.apache.dubbo.common.metrics.model.sample.MetricSample;
 
 import java.util.List;
 
-public class AggregateMetaDataMetricsCollector implements MetricsCollector {
+public class AggregateMetaDataMetricsCollector implements MetricsCollector, MetricsListener {
 
     @Override
     public List<MetricSample> collect() {
         return null;
+    }
+
+    @Override
+    public void onEvent(MetricsEvent event) {
+
     }
 }

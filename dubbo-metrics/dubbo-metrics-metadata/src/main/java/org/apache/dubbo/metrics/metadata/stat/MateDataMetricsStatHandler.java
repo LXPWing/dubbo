@@ -17,12 +17,22 @@
 
 package org.apache.dubbo.metrics.metadata.stat;
 
+import org.apache.dubbo.common.metrics.model.MethodMetric;
 import org.apache.dubbo.metrics.metadata.model.MetaDataMetric;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiConsumer;
 
-public class MateDataMetricsStatHandler implements MetaDataMetricsStatHandler{
+public class MateDataMetricsStatHandler implements MetricsStatHandler {
+    private final String applicationName;
+
+    private final Map<MetaDataMetric, AtomicLong> counts = new ConcurrentHashMap<>();
+
+    public MateDataMetricsStatHandler(String applicationName) {
+        this.applicationName = applicationName;
+    }
 
     @Override
     public Map<MetaDataMetric, AtomicLong> get() {
@@ -30,12 +40,26 @@ public class MateDataMetricsStatHandler implements MetaDataMetricsStatHandler{
     }
 
     @Override
-    public void increase(String interfaceName, String methodName, String group, String version) {
+    public void increase(String interfaceName, String group, String version) {
 
     }
 
     @Override
-    public void decrease(String interfaceName, String methodName, String group, String version) {
+    public void decrease(String interfaceName, String group, String version) {
 
+    }
+
+    protected void doIncrExecute(String interfaceName, String group, String version){
+        this.doExecute(interfaceName, group, version, (metric,counts) -> {
+            AtomicLong count = counts.computeIfAbsent(metric, k -> new AtomicLong(0L));
+            count.incrementAndGet();
+        });
+    }
+
+    protected void doExecute(String interfaceName, String group, String version, BiConsumer<MethodMetric,Map<MethodMetric, AtomicLong>> execute){
+//        MethodMetric metric = new MethodMetric(applicationName, interfaceName, group, version);
+//        execute.accept(metric,counts);
+
+//        this.doNotify(metric);
     }
 }

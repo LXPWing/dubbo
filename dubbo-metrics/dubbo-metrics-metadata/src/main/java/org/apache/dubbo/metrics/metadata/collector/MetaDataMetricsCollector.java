@@ -18,14 +18,21 @@
 package org.apache.dubbo.metrics.metadata.collector;
 
 import org.apache.dubbo.common.metrics.collector.MetricsCollector;
+import org.apache.dubbo.common.metrics.event.RequestEvent;
 import org.apache.dubbo.common.metrics.listener.MetricsListener;
 import org.apache.dubbo.common.metrics.model.sample.MetricSample;
+import org.apache.dubbo.metrics.metadata.event.MetaDataEvent;
+import org.apache.dubbo.metrics.metadata.stat.MetricsStatHandler;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
+// TODO 1.元数据中心接口总数 2.注册成功的接口数 3.注册失败的接口数
 public class MetaDataMetricsCollector implements MetricsCollector {
 
     private AtomicBoolean collectEnabled = new AtomicBoolean(false);
@@ -46,20 +53,22 @@ public class MetaDataMetricsCollector implements MetricsCollector {
         return list;
     }
 
-    public void increaseTotalConnect() {
-
+    public void increaseTotalMetadata(String interfaceName, String group, String version) {
+        doExecute(MetaDataEvent.Type.TOTAL, statHandler -> {
+            statHandler.increase(interfaceName, group, version);
+        });
     }
 
-    public void increaseSucceedConnect() {
-
+    public void increaseSucceedMetaData(String interfaceName, String group, String version) {
+        doExecute(MetaDataEvent.Type.SUCCEED, statHandler -> {
+            statHandler.increase(interfaceName, group, version);
+        });
     }
 
-    public void increaseFailConnect() {
-
-    }
-
-    public void increaseHitCount() {
-
+    public void increaseFailedMetaData(String interfaceName, String group, String version) {
+        doExecute(MetaDataEvent.Type.FAILED, statHandler -> {
+            statHandler.increase(interfaceName, group, version);
+        });
     }
 
     private void collectMetrics(List<MetricSample> list) {
@@ -84,5 +93,19 @@ public class MetaDataMetricsCollector implements MetricsCollector {
 
     public ApplicationModel getApplicationModel() {
         return applicationModel;
+    }
+
+    private <T> Optional<T> doExecute(MetaDataEvent.Type type, Function<MetricsStatHandler,T> statExecutor) {
+        if(isCollectEnabled()) {
+            return null;
+        }
+
+        return null;
+    }
+
+    private void doExecute(MetaDataEvent.Type type, Consumer<MetricsStatHandler> statExecutor) {
+        if (isCollectEnabled()) {
+
+        }
     }
 }

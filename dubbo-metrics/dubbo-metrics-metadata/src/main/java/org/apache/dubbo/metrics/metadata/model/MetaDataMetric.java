@@ -26,19 +26,16 @@ public class MetaDataMetric {
 
     private String interfaceName;
 
-    private String methodName;
-
     private String group;
 
     private String version;
 
     public MetaDataMetric() {}
 
-    public MetaDataMetric(String applicationName, String revision, String interfaceName, String methodName, String group, String version) {
+    public MetaDataMetric(String applicationName, String revision, String interfaceName, String group, String version) {
         this.applicationName = applicationName;
         this.revision = revision;
         this.interfaceName = interfaceName;
-        this.methodName = methodName;
         this.group = group;
         this.version = version;
     }
@@ -67,14 +64,6 @@ public class MetaDataMetric {
         this.interfaceName = interfaceName;
     }
 
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
     public String getGroup() {
         return group;
     }
@@ -96,12 +85,12 @@ public class MetaDataMetric {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MetaDataMetric that = (MetaDataMetric) o;
-        return Objects.equals(applicationName, that.applicationName) && Objects.equals(revision, that.revision) && Objects.equals(interfaceName, that.interfaceName) && Objects.equals(methodName, that.methodName) && Objects.equals(group, that.group) && Objects.equals(version, that.version);
+        return Objects.equals(applicationName, that.applicationName) && Objects.equals(revision, that.revision) && Objects.equals(interfaceName, that.interfaceName) && Objects.equals(group, that.group) && Objects.equals(version, that.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(applicationName, revision, interfaceName, methodName, group, version);
+        return Objects.hash(applicationName, revision, interfaceName, group, version);
     }
 
     @Override
@@ -110,7 +99,6 @@ public class MetaDataMetric {
             "applicationName='" + applicationName + '\'' +
             ", revision='" + revision + '\'' +
             ", interfaceName='" + interfaceName + '\'' +
-            ", methodName='" + methodName + '\'' +
             ", group='" + group + '\'' +
             ", version='" + version + '\'' +
             '}';

@@ -22,8 +22,8 @@ import org.apache.dubbo.metrics.metadata.model.MetaDataMetric;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-public interface MetaDataMetricsStatHandler {
+public interface MetricsStatHandler {
     Map<MetaDataMetric, AtomicLong> get();
-    void increase(String interfaceName, String methodName, String group, String version);
-    void decrease(String interfaceName, String methodName, String group, String version);
+    void increase(String interfaceName, String group, String version);
+    void decrease(String interfaceName, String group, String version);
 }

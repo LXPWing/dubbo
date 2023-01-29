@@ -39,7 +39,5 @@ public class MetaDataEvent extends MetricsEvent {
         TOTAL,
         SUCCEED,
         FAILED,
-        PROCESSING,
-        HIT,
     }
 }

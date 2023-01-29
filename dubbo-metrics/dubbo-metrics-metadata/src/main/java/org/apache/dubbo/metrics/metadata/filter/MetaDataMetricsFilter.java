@@ -23,9 +23,10 @@ import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.rpc.model.ScopeModelAware;
 
+import static org.apache.dubbo.common.constants.CommonConstants.CONSUMER;
 import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER;
 
-@Activate(group = PROVIDER, order = -1)
+@Activate(group = {PROVIDER, CONSUMER}, order = -1)
 public class MetaDataMetricsFilter implements Filter, ScopeModelAware {
     private MetaDataMetricsCollector collector = null;
 
