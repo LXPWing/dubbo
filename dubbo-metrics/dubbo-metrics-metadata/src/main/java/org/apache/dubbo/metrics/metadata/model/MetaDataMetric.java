@@ -17,7 +17,13 @@
 
 package org.apache.dubbo.metrics.metadata.model;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+
+import static org.apache.dubbo.common.constants.MetricsConstants.*;
+import static org.apache.dubbo.common.utils.NetUtils.getLocalHost;
+import static org.apache.dubbo.common.utils.NetUtils.getLocalHostName;
 
 public class MetaDataMetric {
     private String applicationName;
@@ -38,6 +44,16 @@ public class MetaDataMetric {
         this.interfaceName = interfaceName;
         this.group = group;
         this.version = version;
+    }
+
+    public Map<String, String> getTags() {
+        Map<String, String> tags = new HashMap<>();
+        tags.put(TAG_APPLICATION_NAME, applicationName);
+        tags.put(TAG_REVISION_KEY, revision);
+        tags.put(TAG_INTERFACE_KEY, interfaceName);
+        tags.put(TAG_GROUP_KEY, group);
+        tags.put(TAG_VERSION_KEY, version);
+        return tags;
     }
 
     public String getApplicationName() {

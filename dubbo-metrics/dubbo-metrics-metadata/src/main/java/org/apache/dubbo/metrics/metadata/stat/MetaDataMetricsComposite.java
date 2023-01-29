@@ -17,9 +17,11 @@
 
 package org.apache.dubbo.metrics.metadata.stat;
 
-import org.apache.dubbo.common.metrics.collector.DefaultMetricsCollector;
+import org.apache.dubbo.common.metrics.event.MetricsEvent;
+import org.apache.dubbo.common.metrics.event.RequestEvent;
 import org.apache.dubbo.common.metrics.listener.MetricsListener;
 import org.apache.dubbo.metrics.metadata.collector.MetaDataMetricsCollector;
+import org.apache.dubbo.metrics.metadata.event.MetaDataEvent;
 import org.apache.dubbo.metrics.metadata.model.MetaDataMetric;
 
 import java.util.List;
@@ -29,6 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAccumulator;
 
 public class MetaDataMetricsComposite {
+    public Map<MetaDataEvent.Type, MetricsStatHandler> stats = new ConcurrentHashMap<>();
 
     private final Map<MetaDataMetric, AtomicLong> lastRT = new ConcurrentHashMap<>();
 
@@ -41,13 +44,50 @@ public class MetaDataMetricsComposite {
     private final Map<MetaDataMetric, AtomicLong> totalRT = new ConcurrentHashMap<>();
 
     private final Map<MetaDataMetric, AtomicLong> rtCount = new ConcurrentHashMap<>();
+
     private final String applicationName;
+
     private final List<MetricsListener> listeners;
+
     private MetaDataMetricsCollector collector;
 
     public MetaDataMetricsComposite(String applicationName, MetaDataMetricsCollector collector) {
         this.applicationName = applicationName;
         this.listeners = collector.getListeners();
         this.collector = collector;
+        this.init();
+    }
+
+    public MetricsStatHandler getHandler(MetaDataEvent.Type statType) {
+        return stats.get(statType);
+    }
+
+    private void init() {
+        stats.put(MetaDataEvent.Type.TOTAL, new MateDataMetricsStatHandler(applicationName){
+            @Override
+            public void doNotify(MetaDataMetric metric) {
+                publishEvent(new MetaDataEvent(metric, MetaDataEvent.Type.TOTAL));
+            }
+        });
+
+        stats.put(MetaDataEvent.Type.SUCCEED, new MateDataMetricsStatHandler(applicationName){
+            @Override
+            public void doNotify(MetaDataMetric metric) {
+                publishEvent(new MetaDataEvent(metric, MetaDataEvent.Type.SUCCEED));
+            }
+        });
+
+        stats.put(MetaDataEvent.Type.FAILED, new MateDataMetricsStatHandler(applicationName){
+            @Override
+            public void doNotify(MetaDataMetric metric) {
+                publishEvent(new MetaDataEvent(metric, MetaDataEvent.Type.FAILED));
+            }
+        });
+    }
+
+    private void publishEvent(MetricsEvent event) {
+        for (MetricsListener listener : listeners) {
+            listener.onEvent(event);
+        }
     }
 }

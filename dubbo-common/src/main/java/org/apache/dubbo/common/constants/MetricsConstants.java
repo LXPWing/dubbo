@@ -28,6 +28,8 @@ public interface MetricsConstants {
 
     String TAG_INTERFACE_KEY = "interface";
 
+    String TAG_REVISION_KEY = "revision";
+
     String TAG_METHOD_KEY = "method";
 
     String TAG_GROUP_KEY = "group";

@@ -17,7 +17,6 @@
 
 package org.apache.dubbo.metrics.metadata.stat;
 
-import org.apache.dubbo.common.metrics.model.MethodMetric;
 import org.apache.dubbo.metrics.metadata.model.MetaDataMetric;
 
 import java.util.Map;
@@ -36,30 +35,39 @@ public class MateDataMetricsStatHandler implements MetricsStatHandler {
 
     @Override
     public Map<MetaDataMetric, AtomicLong> get() {
-        return null;
+        return counts;
     }
 
     @Override
-    public void increase(String interfaceName, String group, String version) {
-
+    public void increase(String revision, String interfaceName, String group, String version) {
+        this.doIncrExecute(revision, interfaceName, group, version);
     }
 
     @Override
-    public void decrease(String interfaceName, String group, String version) {
-
+    public void decrease(String revision, String interfaceName, String group, String version) {
+        this.doDecrExecute(revision, interfaceName, group, version);
     }
 
-    protected void doIncrExecute(String interfaceName, String group, String version){
-        this.doExecute(interfaceName, group, version, (metric,counts) -> {
+    protected void doIncrExecute(String revision, String interfaceName, String group, String version){
+        this.doExecute(revision, interfaceName, group, version, (metric,counts) -> {
             AtomicLong count = counts.computeIfAbsent(metric, k -> new AtomicLong(0L));
             count.incrementAndGet();
         });
     }
 
-    protected void doExecute(String interfaceName, String group, String version, BiConsumer<MethodMetric,Map<MethodMetric, AtomicLong>> execute){
-//        MethodMetric metric = new MethodMetric(applicationName, interfaceName, group, version);
-//        execute.accept(metric,counts);
-
-//        this.doNotify(metric);
+    protected void doDecrExecute(String revision, String interfaceName, String group, String version){
+        this.doExecute(revision, interfaceName, group, version, (metric, counts) -> {
+            AtomicLong count = counts.computeIfAbsent(metric, k -> new AtomicLong(0L));
+            count.decrementAndGet();
+        });
     }
+
+    protected void doExecute(String revision, String interfaceName, String group, String version, BiConsumer<MetaDataMetric, Map<MetaDataMetric, AtomicLong>> execute){
+        MetaDataMetric metaDataMetric = new MetaDataMetric(applicationName, revision, interfaceName, group, version);
+        execute.accept(metaDataMetric, counts);
+
+        this.doNotify(metaDataMetric);
+    }
+
+    public void doNotify(MetaDataMetric metric){}
 }

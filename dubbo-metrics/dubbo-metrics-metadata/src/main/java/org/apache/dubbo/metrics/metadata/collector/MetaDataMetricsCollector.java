@@ -18,10 +18,12 @@
 package org.apache.dubbo.metrics.metadata.collector;
 
 import org.apache.dubbo.common.metrics.collector.MetricsCollector;
-import org.apache.dubbo.common.metrics.event.RequestEvent;
 import org.apache.dubbo.common.metrics.listener.MetricsListener;
+import org.apache.dubbo.common.metrics.model.MetricsKey;
+import org.apache.dubbo.common.metrics.model.sample.GaugeMetricSample;
 import org.apache.dubbo.common.metrics.model.sample.MetricSample;
 import org.apache.dubbo.metrics.metadata.event.MetaDataEvent;
+import org.apache.dubbo.metrics.metadata.stat.MetaDataMetricsComposite;
 import org.apache.dubbo.metrics.metadata.stat.MetricsStatHandler;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 
@@ -32,6 +34,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static org.apache.dubbo.common.metrics.model.MetricsCategory.METADATA;
+
 // TODO 1.元数据中心接口总数 2.注册成功的接口数 3.注册失败的接口数
 public class MetaDataMetricsCollector implements MetricsCollector {
 
@@ -41,38 +45,48 @@ public class MetaDataMetricsCollector implements MetricsCollector {
 
     private final ApplicationModel applicationModel;
 
+    private final MetaDataMetricsComposite stats;
+
     public MetaDataMetricsCollector(ApplicationModel applicationModel) {
         this.applicationModel = applicationModel;
+        this.stats = new MetaDataMetricsComposite(applicationModel.getApplicationName(), this);
     }
 
     @Override
     public List<MetricSample> collect() {
         List<MetricSample> list = new ArrayList<>();
-        collectMetrics(list);
+        collectMetaData(list);
 
         return list;
     }
 
-    public void increaseTotalMetadata(String interfaceName, String group, String version) {
+    public void increaseTotalMetadata(String revision, String interfaceName, String group, String version) {
         doExecute(MetaDataEvent.Type.TOTAL, statHandler -> {
-            statHandler.increase(interfaceName, group, version);
+            statHandler.increase(revision, interfaceName, group, version);
         });
     }
 
-    public void increaseSucceedMetaData(String interfaceName, String group, String version) {
+    public void increaseSucceedMetaData(String revision, String interfaceName, String group, String version) {
         doExecute(MetaDataEvent.Type.SUCCEED, statHandler -> {
-            statHandler.increase(interfaceName, group, version);
+            statHandler.increase(revision, interfaceName, group, version);
         });
     }
 
-    public void increaseFailedMetaData(String interfaceName, String group, String version) {
+    public void increaseFailedMetaData(String revision, String interfaceName, String group, String version) {
         doExecute(MetaDataEvent.Type.FAILED, statHandler -> {
-            statHandler.increase(interfaceName, group, version);
+            statHandler.increase(revision, interfaceName, group, version);
         });
     }
 
-    private void collectMetrics(List<MetricSample> list) {
+    private void collectMetaData(List<MetricSample> list) {
+        doExecute(MetaDataEvent.Type.TOTAL, MetricsStatHandler::get).filter(e -> !e.isEmpty())
+            .ifPresent(map -> map.forEach((k, v) -> list.add(new GaugeMetricSample(MetricsKey.METRIC_METADATA_TOTAL, k.getTags(), METADATA, v::get))));
 
+        doExecute(MetaDataEvent.Type.SUCCEED, MetricsStatHandler::get).filter(e -> !e.isEmpty())
+            .ifPresent(map -> map.forEach((k, v) -> list.add(new GaugeMetricSample(MetricsKey.METRIC_METADATA_SUCCEED, k.getTags(), METADATA, v::get))));
+
+        doExecute(MetaDataEvent.Type.FAILED, MetricsStatHandler::get).filter(e -> !e.isEmpty())
+            .ifPresent(map -> map.forEach((k, v) -> list.add(new GaugeMetricSample(MetricsKey.METRIC_METADATA_FAILED, k.getTags(), METADATA, v::get))));
     }
 
     public void addListener(MetricsListener listener) {
@@ -97,15 +111,18 @@ public class MetaDataMetricsCollector implements MetricsCollector {
 
     private <T> Optional<T> doExecute(MetaDataEvent.Type type, Function<MetricsStatHandler,T> statExecutor) {
         if(isCollectEnabled()) {
-            return null;
+            MetricsStatHandler handler = stats.getHandler(type);
+            T result =  statExecutor.apply(handler);
+            return Optional.ofNullable(result);
         }
 
-        return null;
+        return Optional.empty();
     }
 
     private void doExecute(MetaDataEvent.Type type, Consumer<MetricsStatHandler> statExecutor) {
         if (isCollectEnabled()) {
-
+            MetricsStatHandler handler = stats.getHandler(type);
+            statExecutor.accept(handler);
         }
     }
 }
