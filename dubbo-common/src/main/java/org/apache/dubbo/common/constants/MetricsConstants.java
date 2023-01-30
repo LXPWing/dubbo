@@ -76,5 +76,5 @@ public interface MetricsConstants {
 
     String METRIC_FILTER_START_TIME = "metric_filter_start_time";
 
-    String TRACE_START_MDC = "trace_START_mdc";
+    String TRACE_START_MDC = "trace_start_mdc";
 }

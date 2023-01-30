@@ -17,18 +17,24 @@
 
 package org.apache.dubbo.metrics.filter;
 
-import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.common.constants.MetricsConstants;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.logger.MDC;
+import org.apache.dubbo.common.logger.log4j.Log4jLogger;
+import org.apache.dubbo.common.logger.slf4j.Slf4jLogger;
 import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.model.ScopeModelAware;
 
-@Activate(group = {CommonConstants.PROVIDER, CommonConstants.CONSUMER}, value = MetricsConstants.TRACE_START_MDC, order = -1)
+import static org.apache.dubbo.common.constants.CommonConstants.CONSUMER;
+import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER;
+
+@Activate(group = {PROVIDER, CONSUMER}, value = MetricsConstants.TRACE_START_MDC, order = -1)
 public class MDCFilter implements Filter, ScopeModelAware {
     private Logger logger = LoggerFactory.getLogger(getClass());
+
+    private TraceMDCInfo info;
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
@@ -36,13 +42,28 @@ public class MDCFilter implements Filter, ScopeModelAware {
         for (Class<?> cls : interfaces) {
             if(cls == MDC.class) {
                 // TODO mdc注入
+                this.init(invocation);
+                if(logger instanceof Slf4jLogger) {
+                    Slf4jInject((Slf4jLogger) logger);
+                } else if(logger instanceof Log4jLogger) {
+                    Log4jInject((Log4jLogger) logger);
+                }
             }
         }
 
         return invoker.invoke(invocation);
     }
 
-    protected void inject(String key, Object val) {
+    private void Slf4jInject(Slf4jLogger log) {
+
+    }
+
+    private void Log4jInject(Log4jLogger log) {
+
+    }
+
+    private void init(Invocation invocation) {
+        info = new TraceMDCInfo();
 
     }
 }

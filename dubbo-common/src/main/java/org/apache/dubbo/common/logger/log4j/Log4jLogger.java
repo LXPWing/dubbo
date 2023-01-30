@@ -133,7 +133,7 @@ public class Log4jLogger implements Logger, MDC {
     }
 
     @Override
-    public void put(String key, Object val) {
+    public void put(String key, Object val) throws IllegalArgumentException {
         org.apache.log4j.MDC.put(key, val);
     }
 

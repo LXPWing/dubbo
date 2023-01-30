@@ -15,17 +15,8 @@
  * limitations under the License.
  */
 
-package org.apache.dubbo.common.logger;
+package org.apache.dubbo.metrics.filter;
 
-/**
- * MDC interface
- */
-public interface MDC {
-    void put(String key, Object val) throws IllegalArgumentException;
+public class TraceMDCInfo {
 
-    void remove(String key);
-
-    Object get(String key);
-
-    void clean();
 }
