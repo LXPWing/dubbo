@@ -44,6 +44,10 @@ public enum MetricsKey {
     METRIC_METADATA_TOTAL("metadata.total", "Total MetaData"),
     METRIC_METADATA_SUCCEED("metadata.succeed", "Succeed MetaData"),
     METRIC_METADATA_FAILED("metadata.failed", "Failed MetaData"),
+
+    METRIC_METADATA_TOTAL_AGG("metadata.total.aggregate", "Aggregated Total MetaData"),
+    METRIC_METADATA_SUCCEED_AGG("metadata.succeed.aggregate", "Aggregated Succeed MetaData"),
+    METRIC_METADATA_FAILED_AGG("metadata.failed.aggregate", "Aggregated Failed MetaData")
     ;
 
     private final String name;

@@ -21,6 +21,9 @@ import org.apache.dubbo.common.metrics.collector.DefaultMetricsCollector;
 import org.apache.dubbo.common.metrics.collector.MetricsCollector;
 import org.apache.dubbo.common.metrics.event.MetricsEvent;
 import org.apache.dubbo.common.metrics.listener.MetricsListener;
+import org.apache.dubbo.common.metrics.model.MetricsCategory;
+import org.apache.dubbo.common.metrics.model.MetricsKey;
+import org.apache.dubbo.common.metrics.model.sample.GaugeMetricSample;
 import org.apache.dubbo.common.metrics.model.sample.MetricSample;
 import org.apache.dubbo.config.MetricsConfig;
 import org.apache.dubbo.config.context.ConfigManager;
@@ -34,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static org.apache.dubbo.common.metrics.model.MetricsCategory.METADATA;
 
 public class AggregateMetaDataMetricsCollector implements MetricsCollector, MetricsListener {
 
@@ -49,7 +54,7 @@ public class AggregateMetaDataMetricsCollector implements MetricsCollector, Metr
 
     private final ApplicationModel applicationModel;
 
-    private static final Integer DEFAULT_COMPRESSION = 100;
+    // private static final Integer DEFAULT_COMPRESSION = 100;
 
     private static final Integer DEFAULT_BUCKET_NUM = 10;
 
@@ -83,7 +88,9 @@ public class AggregateMetaDataMetricsCollector implements MetricsCollector, Metr
     }
 
     private void collectMetaData(List<MetricSample> list) {
-
+        totalMetaData.forEach((k, v) -> list.add(new GaugeMetricSample(MetricsKey.METRIC_METADATA_TOTAL_AGG, k.getTags(), METADATA, v::get)));
+        succeedMetaData.forEach((k, v) -> list.add(new GaugeMetricSample(MetricsKey.METRIC_METADATA_SUCCEED_AGG, k.getTags(), METADATA, v::get)));
+        failedMetaData.forEach((k, v) -> list.add(new GaugeMetricSample(MetricsKey.METRIC_METADATA_FAILED_AGG, k.getTags(), METADATA, v::get)));
     }
 
     @Override
@@ -99,10 +106,13 @@ public class AggregateMetaDataMetricsCollector implements MetricsCollector, Metr
         TimeWindowCounter counter = null;
         switch (type) {
             case TOTAL:
+                counter = totalMetaData.computeIfAbsent(metric, k -> new TimeWindowCounter(bucketNum, timeWindowSeconds));
                 break;
             case SUCCEED:
+                counter = succeedMetaData.computeIfAbsent(metric, k -> new TimeWindowCounter(bucketNum, timeWindowSeconds));
                 break;
             case FAILED:
+                counter = failedMetaData.computeIfAbsent(metric, k -> new TimeWindowCounter(bucketNum, timeWindowSeconds));
                 break;
         }
 

@@ -31,6 +31,8 @@ public class MetaDataMetricsCollectExecutor {
 
     private String interfaceName;
 
+    private String revision;
+
     private String group;
 
     private String version;
@@ -55,6 +57,7 @@ public class MetaDataMetricsCollectExecutor {
 
     }
 
+    // TODO 完成filter解析
     private void init(Invocation invocation) {
         String serviceUniqueName = invocation.getTargetServiceUniqueName();
         String methodName = invocation.getMethodName();
