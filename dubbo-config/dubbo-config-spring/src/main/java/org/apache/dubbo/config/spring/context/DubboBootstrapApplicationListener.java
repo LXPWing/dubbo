@@ -131,9 +131,7 @@ public class DubboBootstrapApplicationListener implements ApplicationListener, A
      * @return if original, return <code>true</code>, or <code>false</code>
      */
     private boolean isOriginalEventSource(ApplicationEvent event) {
-
-        boolean originalEventSource = nullSafeEquals(getApplicationContext(), event.getSource());
-        return originalEventSource;
+        return nullSafeEquals(getApplicationContext(), event.getSource());
     }
 
     @Override

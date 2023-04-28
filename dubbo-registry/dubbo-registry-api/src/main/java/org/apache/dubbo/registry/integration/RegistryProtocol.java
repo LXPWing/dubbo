@@ -290,6 +290,10 @@ public class RegistryProtocol implements Protocol, ScopeModelAware {
         String key = getCacheKey(originInvoker);
 
         return (ExporterChangeableWrapper<T>) bounds.computeIfAbsent(key, s -> {
+            //这里调用protocol.export进行启动服务
+            //此处的protocol，是在RegistryProtocol实例化的时候通过ExtensionLoader依赖注入的
+            //依赖注入的是Protocol的自适应扩展点Protocol$Adaptive
+            //此处的originInvoker.url.protocol=dubbo，所以最终调用的是DubboProtocol.export
             Invoker<?> invokerDelegate = new InvokerDelegate<>(originInvoker, providerUrl);
             return new ExporterChangeableWrapper<>((Exporter<T>) protocol.export(invokerDelegate), originInvoker);
         });

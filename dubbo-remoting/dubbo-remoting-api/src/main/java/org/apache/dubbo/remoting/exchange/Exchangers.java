@@ -65,6 +65,8 @@ public class Exchangers {
         if (handler == null) {
             throw new IllegalArgumentException("handler == null");
         }
+        //此处的getExchanger是通过ExtensionLoader获取的Exchanger的扩展点HeaderExchanger。
+        //所以，要跟进去HeaderExchanger.bind()
         url = url.addParameterIfAbsent(Constants.CODEC_KEY, "exchange");
         return getExchanger(url).bind(url, handler);
     }
